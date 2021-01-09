@@ -1,11 +1,10 @@
-import './App.css'
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
 import { firestoredb } from './firebase'
 import { getFriendsList, getTopTracks, getTopArtists, getTopGenres, saveSimilarityScore, addNewFriend} from './firebase'
+import Button from './components/Button'
+
 const spotifyApi = new SpotifyWebApi()
-
-
 
 function App() {
   const [tracks, setTracks] = useState([])
@@ -44,7 +43,7 @@ function App() {
     // Genre Similarity
     function genreSimilarity(usr1Genres, usr2Genres){
       let similarity = usr1Genres.filter((val) => { // filters current users topTracks with other users'
-        return usr2Genres.indexOf(val) != -1
+        return usr2Genres.indexOf(val) !== -1
       })
       setGenreSimilarity((similarity.length/usr1Genres.length)*100)
     }
@@ -124,17 +123,10 @@ function App() {
     spotifyApi.setAccessToken(token)
   }
 
-
-
-
-
-
-
   return (
     <div className="App">
       <header className="App-header">
-
-        <a href='http://localhost:8888'>Login to Spotify</a>
+        <Button />
         <div>
           Your ID: {currentUser}
         </div>
@@ -143,7 +135,6 @@ function App() {
         </div>
 
         <TextBox/>
-
       </header>
     </div>
   )

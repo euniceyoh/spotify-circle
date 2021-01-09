@@ -2,9 +2,13 @@
 
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
+
 import { firestoredb } from './firebase'
 import Home from './components/Home'
 import LoginButton from './components/Button'
+
+import { getFriendsList } from './firebase'
+
 
 const spotifyApi = new SpotifyWebApi()
 

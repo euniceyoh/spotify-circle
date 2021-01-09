@@ -5,6 +5,19 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var port = process.env.PORT || 8888
+var spotifyAccountId
+
+var admin = require("firebase-admin"); // firebase initialization 
+
+var serviceAccount = require("./spotify-circle-key.json");
+const { createSecureServer } = require('http2');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://spotify-circle-76dff-default-rtdb.firebaseio.com"
+});
+
+const db = admin.firestore()
 
 var client_id = 'c01d88ef446b4302be8ffb1b0f1c6838'; // Your client id
 var client_secret = 'b22d35a168064f81ba19541c09fd1b8c'; // Your secret
@@ -94,49 +107,76 @@ app.get('/callback', function(req, res) {
         spotifyApi.setAccessToken(access_token)
 
         var options = {
-          url: 'https://api.spotify.com/v1/me/top/artists?' +
-          querystring.stringify({
-            time_range: 'short_term',
-            limit: 5,
-            offset: 0,
-          }),
+          url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
-        // step 3: use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          // console.log(body.items[0].name); // contains a paging object
-          // let artists = body.items
-          // artists.forEach(printArtistName)
-          // function printArtistName(value) {
-          //   console.log(value.name)
-          // }
-        });
-
-        // get user's top artists
-        spotifyApi
-        .getMyTopArtists({time_range: 'short_term', limit:10, offset: 0}) // accepts JSON object with set of options
-        .then(function(data) { // success callback
-          let topArtists = data.body.items
-          topArtists.forEach(print)
-          function print(value) {
-            console.log(value.name)
-          }
-        }, function(err) { // error callback
-          console.error('Something went wrong!', err)
-        })
-
-        // get user's top tracks
-        spotifyApi.getMyTopTracks({time_range: 'short_term', limit:10, offset: 0})
+        // get user profile 
+        spotifyApi.getMe()
         .then(function(data) {
-          let topTracks = data.body.items
-          topTracks.forEach(print)
-          function print(value) {
-            console.log(value.name)
+          console.log('Some information about the authenticated user', data.body);
+          const userInfo = {
+            name: data.body.display_name,
+            email: data.body.email,
           }
-        }, function(err) {
-          console.log('Something went wrong!', err)
+          let docRef = db.collection('users').doc(data.body.id)
+          createUser()
+
+          async function createUser() {
+            await docRef.set(userInfo)
+          }
+          spotifyAccountId = data.body.id
+          return data.body.id
+        })
+        .then(function(accountId) { // how to effectively use accountId
+          return spotifyApi.getMyTopArtists({time_range: 'short_term', limit:10, offset: 0})
+        })
+        .then(function(data) {
+          console.log(spotifyAccountId)
+          let artists = data.body.items
+          let genres = []
+          let artistNames = []
+          for(i in artists) {
+            artistNames.push(artists[i].name)
+            for(j in artists[i].genres) {
+              genres.push(artists[i].genres[j])
+            }
+          }
+          let uniqueGenres = [...new Set(genres)]
+
+          console.log('unique set: ')
+          for(i in uniqueGenres) {
+            console.log(uniqueGenres[i])
+          }
+
+          let docRef = db.collection('users').doc(spotifyAccountId)
+          addGenre()
+
+          async function addGenre() {
+            await docRef.set({genres: uniqueGenres}, {merge: true})
+            await docRef.set({artists: artistNames}, {merge: true})
+          }
+
+          return spotifyApi.getMyTopTracks({time_range: 'short_term', limit:10, offset: 0})
+        })
+        .then(function(data) {
+          let tracksData = data.body.items
+          let trackInfo = []
+
+          for(i in tracksData) {
+            trackInfo.push(tracksData[i].id)
+          }
+
+          let docRef = db.collection('users').doc(spotifyAccountId)
+          addTracks()
+
+          async function addTracks() {
+            await docRef.set({trackId: trackInfo}, {merge: true})
+          }
+        }) 
+        .catch(function(err) {
+          console.error(err)
         })
 
         // we can also pass the token to the browser to make requests from there
@@ -182,9 +222,3 @@ app.get('/refresh_token', function(req, res) {
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-// setting up a GET route that will be fetched within client side React app
-app.get('/express_backend', (req,res) => {
-  res.send({express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT'})
-})
-
-// important

@@ -1,11 +1,4 @@
-/**
- * This is an example of a basic node.js script that performs
- * the Authorization Code oAuth2 flow to authenticate against
- * the Spotify Accounts.
- *
- * For more information, read
- * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
- */
+
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
@@ -47,7 +40,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state); // ? 
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email'; // determines access permissions user grants
+  var scope = 'user-read-private user-read-email user-top-read user-read-playback-state'; // determines access permissions user grants
   res.redirect('https://accounts.spotify.com/authorize?' + // prompts user to authorize access 
     querystring.stringify({
       response_type: 'code',
@@ -80,34 +73,45 @@ app.get('/callback', function(req, res) {
       url: 'https://accounts.spotify.com/api/token',
       form: {
         code: code, // authorization code returned from request to Account 
-        redirect_uri: redirect_uri,
+        redirect_uri: redirect_uri, // used for validation only 
         grant_type: 'authorization_code' // required
       },
       headers: {
-        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+        'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64'))
       },
       json: true
     };
 
+    // Spotify Web API returns JSON object !!! 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        var access_token = body.access_token,
+        var access_token = body.access_token, 
             refresh_token = body.refresh_token;
 
         var options = {
-          url: 'https://api.spotify.com/v1/me',
+          url: 'https://api.spotify.com/v1/me/top/artists?' + 
+          querystring.stringify({
+            time_range: 'short_term',
+            limit: 5,
+            offset: 0,
+          }),
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
-        // use the access token to access the Spotify Web API
+        // step 3: use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          // console.log(body.items[0].name); // contains a paging object 
+          let artists = body.items
+          artists.forEach(printArtistName)
+          function printArtistName(value) {
+            console.log(value.name)
+          }
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
+        res.redirect('http://localhost:3000/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
@@ -122,13 +126,14 @@ app.get('/callback', function(req, res) {
   }
 });
 
+// step 4: spotify returns new access token to app 
 app.get('/refresh_token', function(req, res) {
 
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+    headers: { 'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64')) },
     form: {
       grant_type: 'refresh_token',
       refresh_token: refresh_token

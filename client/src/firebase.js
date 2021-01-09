@@ -10,6 +10,7 @@ var firebaseConfig = {
     appId: "1:641874987404:web:50997de6851e1f7667aea9",
     measurementId: "G-91M1Y3GKZC"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
@@ -32,7 +33,6 @@ export const getTopArtists = userId => {
 export const getTopGenres = userId => {
     return db.collection('users').doc(userId).get('topGenres');
 }
-
 
 // If friend is registered in database, add friend doc to user's friend list in firebase and vice versa
 export const addNewFriend = (userId, friendId) => {
@@ -107,3 +107,4 @@ export const saveSimilarityScore = (userId, friendId, similarityScore) => {
         console.error("Error writing document: ", error);
     });
 };
+

@@ -120,6 +120,7 @@ app.get('/callback', function(req, res) {
             name: data.body.display_name,
             email: data.body.email,
           }
+          // create new user doc
           let docRef = db.collection('users').doc(data.body.id)
           createUser()
 

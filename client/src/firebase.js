@@ -1,4 +1,3 @@
-import React from 'react';
 import firebase from 'firebase';
 
 var firebaseConfig = {
@@ -11,10 +10,10 @@ var firebaseConfig = {
     appId: "1:641874987404:web:50997de6851e1f7667aea9",
     measurementId: "G-91M1Y3GKZC"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const firestoredb = firebase.firestore()
-
 
 export default firestoredb;

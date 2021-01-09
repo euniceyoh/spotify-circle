@@ -4,9 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react'
 
 const spotifyApi = new SpotifyWebApi()
 
-const test_user = [] // model data base entry?? contains topSongs,topArtists
+const test_user = [] // model data base entry?? contains topSongs,topArtists 
 
 function App() {
+  
   const [tracks, setTracks] = useState([])
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])
@@ -48,13 +49,12 @@ function App() {
         <div>
           Genres: {genres}
         </div>
-
-{//Initialize test user, copy of current user
-}        <button onClick={() => {
+     
+      <button onClick={() => { // init test user, copy of current user   
           spotifyApi.getMyTopTracks({limit: 50})
           .then((response) => {
             let result = response.items.map(a => a.name)
-            test_user.[0] = ((Object.values(result)))
+            test_user[0] = ((Object.values(result)))
             setTopTracks(result)
             })
 
@@ -64,29 +64,17 @@ function App() {
               test_user[1] = ((Object.values(result)))
               setTopArtists(result)
             })
+          }}>init test user</button>
 
-
-          }
-        }>init test user</button>
-
-        <button onClick={() => {
-          //Can repeat this for artist, genre, etc
-          let similarity = topTracks.filter(function(val) { // filters current users topTracks with other users'
-            return test_user[0].indexOf(val) != -1
+        <button onClick={() => { // carter's code 
+          // repeat for artist, genre, etc
+          let similarity = topTracks.filter(val => { // filters current users topTracks with other users' 
+            return test_user[0].indexOf(val) !== -1 // what does this do? 0 index = tracks 
           })
           setTrackSimilarity((similarity.length/topTracks.length)*100)
-
-        }
-
-              //grab your songs
-              //grab friends songs from data base
-              //var arr = mysongs.filter(function sim(yoursongs) => {
-              //mysongs.indexOf(yoursongs) != -1
-            //}
-
-
-        }>Track Similarity</button>
-
+        }}>Track Similarity
+        </button>
+            
         <button onClick={() => {
           spotifyApi.getMyTopTracks({limit: 50})
           .then((response) => {
@@ -112,5 +100,11 @@ function App() {
     </div>
   )
 }
+
+  // grab your songs
+  // grab friends songs from data base
+  // var arr = mysongs.filter(function sim(yoursongs) => {
+  // mysongs.indexOf(yoursongs) != -1
+  // }
 
 export default App;

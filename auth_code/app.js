@@ -1,20 +1,22 @@
-
-
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var SpotifyWebApi = require('spotify-web-api-node');
+var port = process.env.PORT || 8888
 
 var client_id = ''; // Your client id
 var client_secret = ''; // Your secret
 var redirect_uri = 'http://localhost:8888/callback/'; // Your redirect uri
+var spotifyApi = new SpotifyWebApi();
 
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
+
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -89,6 +91,8 @@ app.get('/callback', function(req, res) {
         var access_token = body.access_token, 
             refresh_token = body.refresh_token;
 
+        spotifyApi.setAccessToken(access_token)
+
         var options = {
           url: 'https://api.spotify.com/v1/me/top/artists?' + 
           querystring.stringify({
@@ -103,12 +107,37 @@ app.get('/callback', function(req, res) {
         // step 3: use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           // console.log(body.items[0].name); // contains a paging object 
-          let artists = body.items
-          artists.forEach(printArtistName)
-          function printArtistName(value) {
+          // let artists = body.items
+          // artists.forEach(printArtistName)
+          // function printArtistName(value) {
+          //   console.log(value.name)
+          // }
+        });
+
+        // get user's top artists 
+        spotifyApi
+        .getMyTopArtists({time_range: 'short_term', limit:10, offset: 0}) // accepts JSON object with set of options
+        .then(function(data) { // success callback 
+          let topArtists = data.body.items
+          topArtists.forEach(print)
+          function print(value) {
             console.log(value.name)
           }
-        });
+        }, function(err) { // error callback 
+          console.error('Something went wrong!', err)
+        })
+      
+        // get user's top tracks
+        spotifyApi.getMyTopTracks({time_range: 'short_term', limit:10, offset: 0})
+        .then(function(data) {
+          let topTracks = data.body.items
+          topTracks.forEach(print)
+          function print(value) {
+            console.log(value.name)
+          }
+        }, function(err) {
+          console.log('Something went wrong!', err)
+        })
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('http://localhost:3000/#' +
@@ -151,5 +180,15 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
+// setting up a GET route that will be fetched within client side React app 
+app.get('/express_backend', (req,res) => {
+  res.send({express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT'})
+})
+
+// important 
+
+
+
+

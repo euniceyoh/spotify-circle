@@ -107,6 +107,3 @@ export const saveSimilarityScore = (userId, friendId, similarityScore) => {
         console.error("Error writing document: ", error);
     });
 };
-
-saveSimilarityScore('random', 'random2', 18)
-

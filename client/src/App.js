@@ -26,7 +26,7 @@ function App() {
   if(token) {
     spotifyApi.setAccessToken(token)
   }
-
+  
   return (
     <div className="App">
       <header className="App-header">

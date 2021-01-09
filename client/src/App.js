@@ -1,14 +1,14 @@
 import './App.css'
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
-import { firestoredb } from './firebase'
+import { getFriendsList } from './firebase'
 
 const spotifyApi = new SpotifyWebApi()
 
 const test_user = [] // model data base entry?? contains topSongs,topArtists 
 
 function App() {
-  
+
   const [tracks, setTracks] = useState([])
   const [artists, setArtists] = useState([])
   const [genres, setGenres] = useState([])

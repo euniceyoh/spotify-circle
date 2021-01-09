@@ -1,6 +1,7 @@
 import './App.css'
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
+import { firestoredb } from './firebase'
 
 const spotifyApi = new SpotifyWebApi()
 
@@ -54,7 +55,7 @@ function App() {
           spotifyApi.getMyTopTracks({limit: 50})
           .then((response) => {
             let result = response.items.map(a => a.name)
-            test_user.[0] = ((Object.values(result)))
+            test_user[0] = ((Object.values(result)))
             setTopTracks(result)
             })
 

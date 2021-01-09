@@ -2,7 +2,7 @@ import './App.css'
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
 import { firestoredb } from './firebase'
-
+import { getFriendsList, getTopTracks, getTopArtists, getTopGenres, saveSimilarityScore, addNewFriend} from './firebase'
 const spotifyApi = new SpotifyWebApi()
 
 
@@ -56,8 +56,9 @@ function App() {
       let usr1Genres = getTopGenres(usr1)
 
       let usr2Tracks = getTopTracks(usr2)
-      let usr2rtists = getTopArtists(usr2)
+      let usr2Artists = getTopArtists(usr2)
       let usr2Genres = getTopGenres(usr2)
+
 
       trackSimilarity(usr1Tracks, usr2Tracks)
       artistsSimilarity(usr1Artists, usr2Artists)
@@ -66,7 +67,7 @@ function App() {
       let sum = trackSimScore + artistsSimScore + genreSimScore
       sum = sum/3
       setSimScore(sum)
-      saveSimilarityScore(user1, usr2, similarityScore)
+      saveSimilarityScore(usr1, usr2, similarityScore)
 
     }
 

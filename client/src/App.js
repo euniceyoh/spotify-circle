@@ -1,6 +1,7 @@
 import './App.css'
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
+import { firestoredb } from './firebase'
 
 const spotifyApi = new SpotifyWebApi()
 

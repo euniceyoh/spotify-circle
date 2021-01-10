@@ -32,7 +32,7 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
-        <BubbleChart />
+        <BubbleChart userId={currentUser} />
       </header>
     </div>
   )

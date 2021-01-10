@@ -57,7 +57,7 @@ function TextBox(props) {
   const [fartists, setfArtists] = useState([])
   const [ftracks, setfTracks] = useState([])
   // friend list
-  const [fList, setFList] = useState([[currentUser, 100]])
+  const [fList, setFList] = useState([])
   //  {id: 20201},
   //])
 
@@ -155,7 +155,7 @@ function TextBox(props) {
         Similarity Score: {similarityScore}
       </div>
       <div>
-        Friend List: {(fList[0][0])}
+        Friend List: {(fList)}
       </div>
       <button onClick={
         () => {getFriendList()}

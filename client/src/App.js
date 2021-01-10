@@ -1,8 +1,6 @@
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
 import firestoredb, {saveSimilarityScore, addNewFriend} from './firebase'
-import Button from './components/Button'
-import Home from './components/Home'
 import {getHashParams, trackSimilarity, artistsSimilarity, genreSimilarity} from './functions'
 import BubbleChart from '@weknow/react-bubble-chart-d3';
 
@@ -18,15 +16,19 @@ export default function App() {
 
   spotifyApi.getMe()
     .then((user) => {
-      setCurrentUser(user.id) // a string right 
+      setCurrentUser(user.id) // a string right
   })
 
 
   return (
     <div className="App">
       <header className="App-header">
-        <Home />
-        <Button />
+        <h1>Welcome to Spotify Circle</h1>
+        <div id="login">
+          <form action='http://localhost:8888/login'>
+            <input type="submit" value="Login to Spotify" />
+          </form>
+        </div>
         <div>
           Your ID: {currentUser}
         </div>
@@ -37,14 +39,16 @@ export default function App() {
 }
 
 function TextBox(props) {
+ let user = props.userId 
 
-  let user = props.userId 
-
-  const[inputValue, setInputValue] = useState('') // aka id of friend 
+  const[inputValue, setInputValue] = useState('') // aka id of friend
   const[data, setData] = useState([])
-  // similarity 
+  // similarity
   const [similarityScore, setSimScore] = useState(0)
-  // me 
+  const [trackSimScore, setTrackSimilarity] = useState(0)
+  const [artistsSimScore, setArtistsSimilarity] = useState(0)
+  const [genreSimScore, setGenreSimilarity] = useState(0)
+  // me
   const [genres, setGenres] = useState([])
   const [artists, setArtists] = useState([])
   const [tracks, setTracks] = useState([])
@@ -77,7 +81,7 @@ function TextBox(props) {
       fdocRef.get().then((doc) => {
         if(doc.exists) {
           let data = doc.data();
-          setData(data) // reusing 
+          setData(data) // reusing
           setfGenres(data.genres)
           setfArtists(data.artists)
           setfTracks(data.trackId)
@@ -95,11 +99,13 @@ function TextBox(props) {
       let gs = genreSimilarity(genres, fgenres)
       // setGenreSimilarity(gs)
 
+      setTracks(ts)
+      setArtists(as)
+      setGenres(gs)
       let sum = ts + as + gs
-      sum = sum/3
       setSimScore(sum)
-      
-      // writing to firebase 
+
+      // writing to firebase
       addNewFriend(user, inputValue)
       saveSimilarityScore(user, inputValue, sum)
     }
@@ -146,3 +152,4 @@ function TextBox(props) {
       </div>
     )
 }
+

@@ -19,30 +19,31 @@ function getHashParams() {
     let similarity = usr1Tracks.filter((val) => { // filters current users topTracks with other users'
       return usr2Tracks.indexOf(val) !== -1
     })
-    return (similarity.length/usr1Tracks.length)*100  // to be nice 
+    let albums = usr1Tracks
+    return (similarity.length)///usr1Tracks.length)*100  // to be nice
   }
 
     // Artists Similarity
   function artistsSimilarity(usr1Artists, usr2Artists){
-  let similarity = usr1Artists.filter((val) => { // filters current users topTracks with other users'
+  let similarity = usr1Artists.filter((val) => {
     return usr2Artists.indexOf(val) !== -1
   })
-  return (similarity.length/usr1Artists.length)*100
+  return (similarity.length)///usr1Artists.length)*100
   // setArtistsSimilarity((similarity.length/usr1Artists.length)*100)
 }
 
 // Genre Similarity
 function genreSimilarity(usr1Genres, usr2Genres){
-  let similarity = usr1Genres.filter((val) => { // filters current users topTracks with other users'
+  let similarity = usr1Genres.filter((val) => {
     return usr2Genres.indexOf(val) !== -1
   })
-  return (similarity.length/usr1Genres.length)*100
+  return (similarity.length)///usr1Genres.length)*100
   // setGenreSimilarity((similarity.length/usr1Genres.length)*100)
 }
 
-// Overall Similarity  
+// Overall Similarity
 function computeSimilarity(usr1){
-    
+
 //   let usr1Artists = getTopArtists(usr1)
 //   let usr1Genres = getTopGenres(usr1)
 
@@ -56,5 +57,5 @@ function computeSimilarity(usr1){
 
 //   let sum = trackSimScore + artistsSimScore + genreSimScore
 //   sum = sum/3
-//   return sum 
+//   return sum
 }

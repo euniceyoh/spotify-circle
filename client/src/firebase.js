@@ -15,29 +15,12 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 //  Initialize Firestore
-const db = firebase.firestore();
-
-// Getter functions
-export const getFriendsList = userId => {
-    return db.collection('users').doc(userId).collection('friendsList').get();
-};
-
-export const getTopTracks = userId => {
-    return db.collection('users').doc(userId).get('topTracks');
-};
-
-export const getTopArtists = userId => {
-    return db.collection('users').doc(userId).get('topArtists');
-};
-
-export const getTopGenres = userId => {
-    return db.collection('users').doc(userId).get('topGenres');
-}
+let firestoredb = firebase.firestore();
 
 // If friend is registered in database, add friend doc to user's friend list in firebase and vice versa
 export const addNewFriend = (userId, friendId) => {
-    let friendRef = db.collection('users').doc(friendId);
-    let userRef = db.collection('users').doc(userId);
+    let friendRef = firestoredb.collection('users').doc(friendId);
+    let userRef = firestoredb.collection('users').doc(userId);
 
     // Check that friendId is a valid id in users collection
     friendRef.get().then(function(doc) {
@@ -48,7 +31,7 @@ export const addNewFriend = (userId, friendId) => {
                     console.log('Friend ' + friendId + 'already exists in user friendList');
                 } else {
                     // Add friend to user's friendlist
-                    db.collection('users').doc(userId).collection('friendsList').doc(friendId).set({
+                    firestoredb.collection('users').doc(userId).collection('friendsList').doc(friendId).set({
                         similarityScore: null
                     })
                     .then(function() {
@@ -59,7 +42,7 @@ export const addNewFriend = (userId, friendId) => {
                     });
 
                     // Add user to friend's friendlist
-                    db.collection('users').doc(friendId).collection('friendsList').doc(userId).set({
+                    firestoredb.collection('users').doc(friendId).collection('friendsList').doc(userId).set({
                         similarityScore: null
                     })
                     .then(function() {
@@ -86,9 +69,11 @@ export const saveSimilarityScore = (userId, friendId, similarityScore) => {
     // Note: firestore does not allow repeating fields in a document
 
     // Add or overwrite similarity score for friend's document within user's friendList
-    db.collection('users').doc(userId).collection('friendsList').doc(friendId).set({
+    firestoredb.collection('users').doc(userId).collection('friendsList').doc(friendId).set(
+        {
         similarityScore: similarityScore
-    })
+        }
+    )
     .then(function() {
         console.log("Similarity score successfully written into user's friend list!");
     })
@@ -97,7 +82,7 @@ export const saveSimilarityScore = (userId, friendId, similarityScore) => {
     });
 
     // Add or overwrite similarity score for user's  document within friend's friendList
-    db.collection('users').doc(friendId).collection('friendsList').doc(userId).set({
+    firestoredb.collection('users').doc(friendId).collection('friendsList').doc(userId).set({
         similarityScore: similarityScore
     })
     .then(function() {
@@ -108,3 +93,5 @@ export const saveSimilarityScore = (userId, friendId, similarityScore) => {
     });
 };
 
+
+export default firestoredb

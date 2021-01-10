@@ -1,143 +1,146 @@
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
-import { firestoredb } from './firebase'
-import { getFriendsList, getTopTracks, getTopArtists, getTopGenres, saveSimilarityScore, addNewFriend} from './firebase'
+import firestoredb, {saveSimilarityScore, addNewFriend} from './firebase'
 import Button from './components/Button'
-
-const spotifyApi = new SpotifyWebApi()
+import Home from './components/Home'
+import {getHashParams, trackSimilarity, artistsSimilarity, genreSimilarity} from './functions'
 
 function App() {
-  const [tracks, setTracks] = useState([])
-  const [artists, setArtists] = useState([])
-  const [genres, setGenres] = useState([])
-  const [currentUser, setCurrentUser] = useState([])
-  const [otherUser, setOtherUser] = useState([])
+  const [currentUser, setCurrentUser] = useState('')
 
-  const [trackSimScore, setTrackSimilarity] = useState([])
-  const [artistsSimScore, setArtistsSimilarity] = useState([])
-  const [genreSimScore, setGenreSimilarity] = useState([])
-  const [similarityScore, setSimScore] = useState([])
-
-  // Gets current user's ID
-  spotifyApi.getMe()
-    .then((user) => {
-      setCurrentUser(user.id)
-    })
-
-    // Track Similarity
-    function trackSimilarity(usr1Tracks, usr2Tracks){
-      let similarity = usr1Tracks.filter((val) => { // filters current users topTracks with other users'
-        return usr2Tracks.indexOf(val) != -1
-      })
-      setTrackSimilarity((similarity.length/usr1Tracks.length)*100)
-    }
-
-    // Artists Similarity
-    function artistsSimilarity(usr1Artists, usr2Artists){
-      let similarity = usr1Artists.filter((val) => { // filters current users topTracks with other users'
-        return usr2Artists.indexOf(val) != -1
-      })
-      setArtistsSimilarity((similarity.length/usr1Artists.length)*100)
-    }
-
-    // Genre Similarity
-    function genreSimilarity(usr1Genres, usr2Genres){
-      let similarity = usr1Genres.filter((val) => { // filters current users topTracks with other users'
-        return usr2Genres.indexOf(val) !== -1
-      })
-      setGenreSimilarity((similarity.length/usr1Genres.length)*100)
-    }
-
-    // Overall Similarity
-    function computeSimilarity(usr1, usr2){
-      let usr1Tracks = getTopTracks(usr1)
-      let usr1Artists = getTopArtists(usr1)
-      let usr1Genres = getTopGenres(usr1)
-
-      let usr2Tracks = getTopTracks(usr2)
-      let usr2Artists = getTopArtists(usr2)
-      let usr2Genres = getTopGenres(usr2)
-
-
-      trackSimilarity(usr1Tracks, usr2Tracks)
-      artistsSimilarity(usr1Artists, usr2Artists)
-      genreSimilarity(usr1Genres, usr2Genres)
-
-      let sum = trackSimScore + artistsSimScore + genreSimScore
-      sum = sum/3
-      setSimScore(sum)
-      saveSimilarityScore(usr1, usr2, similarityScore)
-
-    }
-
-    class TextBox extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = {value: ''};
-      }
-
-      handleChange = (event) => {
-        this.setState({value: event.target.value});
-      }
-
-      handleSubmit = (event) => {
-        setOtherUser(this.state.value)
-
-
-        addNewFriend(currentUser, otherUser)
-        addNewFriend(otherUser, currentUser)
-        computeSimilarity(currentUser, otherUser)
-
-
-        event.preventDefault();
-      }
-
-      render() {
-        return (
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              <input type="text" value={this.state.value} onChange={this.handleChange} />
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
-        );
-      }
-    }
-
-
-  function getHashParams() {
-    var hashParams = {}
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    e = r.exec(q)
-    while (e) {
-       hashParams[e[1]] = decodeURIComponent(e[2]);
-       e = r.exec(q)
-    }
-    return hashParams
-  }
-
+  const spotifyApi = new SpotifyWebApi()
   const params = getHashParams()
   const token = params.access_token
   if(token) {
     spotifyApi.setAccessToken(token)
   }
 
+  spotifyApi.getMe()
+    .then((user) => {
+      setCurrentUser(user.id) // a string right 
+  })
+
   return (
     <div className="App">
       <header className="App-header">
+        <Home />
         <Button />
         <div>
           Your ID: {currentUser}
         </div>
-        <div>
-          Track Similarity: { similarityScore }%
-        </div>
-
-        <TextBox/>
+        <TextBox userId={currentUser}/>
       </header>
     </div>
   )
 }
 
+function TextBox(props) {
+    
+  let user = props.userId 
+
+  const[inputValue, setInputValue] = useState('') // aka id of friend 
+  const[data, setData] = useState([])
+  // similarity 
+  const [similarityScore, setSimScore] = useState(0)
+  const [trackSimScore, setTrackSimilarity] = useState(0)
+  const [artistsSimScore, setArtistsSimilarity] = useState(0)
+  const [genreSimScore, setGenreSimilarity] = useState(0)
+  // me 
+  const [genres, setGenres] = useState([])
+  const [artists, setArtists] = useState([])
+  const [tracks, setTracks] = useState([])
+  // friend
+  const [fgenres, setfGenres] = useState([])
+  const [fartists, setfArtists] = useState([])
+  const [ftracks, setfTracks] = useState([])
+
+  // get current user's ID
+  // get top tracks for current user
+
+    let calculateScore = () => {
+      const docRef = firestoredb.collection('users').doc(user)
+      docRef.get().then((doc) => {
+        if(doc.exists) {
+          let data = doc.data();
+          setData(data)
+          setGenres(data.genres)
+          setArtists(data.artists)
+          setTracks(data.trackId)
+        }
+      }).catch(function(error) {
+        setData(null)
+      })
+      const fdocRef = firestoredb.collection('users').doc(inputValue)
+      fdocRef.get().then((doc) => {
+        if(doc.exists) {
+          let data = doc.data();
+          setData(data) // reusing 
+          setfGenres(data.genres)
+          setfArtists(data.artists)
+          setfTracks(data.trackId)
+        }
+      }).catch(function(error) {
+        setData(null)
+      })
+    }
+
+    let calculateScore2 = () => {
+      let ts = trackSimilarity(tracks, ftracks)
+      // setTrackSimilarity(ts)
+      let as = artistsSimilarity(artists, fartists)
+      // setArtistsSimilarity(as)
+      let gs = genreSimilarity(genres, fgenres)
+      // setGenreSimilarity(gs)
+
+      let sum = ts + as + gs
+      sum = sum/3
+      setSimScore(sum)
+      
+      // writing to firebase 
+      addNewFriend(user, inputValue)
+      saveSimilarityScore(user, inputValue, sum)
+    }
+
+  return (
+      <div>
+      <form onSubmit={
+        calculateScore 
+        }>
+        <label>
+          <input type="text" value={inputValue} onChange={(event) => {
+            setInputValue(event.target.value)
+            }} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+      <div>
+        Similarity Score: {similarityScore}
+      </div>
+      <div>
+        Genres: {genres}
+      </div>
+      <div>
+        Artists: {artists}
+      </div>
+      <div>
+        Tracks: {tracks}
+      </div>
+      <h1>FRIEND</h1>
+      <div>
+        fGenres: {fgenres}
+      </div>
+      <div>
+        fArtists: {fartists}
+      </div>
+      <div>
+        fTracks: {ftracks}
+      </div>
+      <button onClick={calculateScore2}>
+        Show Percentage
+      </button>
+      </div>
+    )
+}
+
 export default App;
+

@@ -223,3 +223,15 @@ app.get('/refresh_token', function(req, res) {
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
+const cityRef = db.collection('users').doc('12132229959');
+get()
+
+async function get() {
+  const doc = await cityRef.get();
+  if (!doc.exists) {
+    console.log('No such document!');
+  } else {
+    console.log('Document data:', doc.data());
+  }
+
+}

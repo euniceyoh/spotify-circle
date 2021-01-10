@@ -131,7 +131,7 @@ app.get('/callback', function(req, res) {
           return data.body.id
         })
         .then(function(accountId) { // how to effectively use accountId
-          return spotifyApi.getMyTopArtists({time_range: 'short_term', limit:10, offset: 0})
+          return spotifyApi.getMyTopArtists({time_range: 'medium_term', limit:50, offset: 0})
         })
         .then(function(data) {
           console.log(spotifyAccountId)
@@ -159,7 +159,7 @@ app.get('/callback', function(req, res) {
             await docRef.set({artists: artistNames}, {merge: true})
           }
 
-          return spotifyApi.getMyTopTracks({time_range: 'short_term', limit:10, offset: 0})
+          return spotifyApi.getMyTopTracks({time_range: 'medium_term', limit:50, offset: 0})
         })
         .then(function(data) {
           let tracksData = data.body.items
@@ -235,3 +235,4 @@ async function get() {
   }
 
 }
+

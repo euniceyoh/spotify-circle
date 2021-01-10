@@ -35,7 +35,6 @@ function App() {
 }
 
 function TextBox(props) {
-    
   let user = props.userId 
 
   const[inputValue, setInputValue] = useState('') // aka id of friend 

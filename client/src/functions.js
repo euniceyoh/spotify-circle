@@ -14,9 +14,8 @@ function getHashParams() {
     return hashParams
   }
 
-  // // Track Similarity
-
-function trackSimilarity(usr1Tracks, usr2Tracks){
+  // Track Similarity
+ function trackSimilarity(usr1Tracks, usr2Tracks){
     let similarity = usr1Tracks.filter((val) => { // filters current users topTracks with other users'
       return usr2Tracks.indexOf(val) !== -1
     })

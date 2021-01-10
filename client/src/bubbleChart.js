@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
+import firestoredb from './firebase'
 import * as d3 from 'd3';
 
-function BubbleChart(props) {
+function BubbleChart() {
     // dummy data
-    let data = props.data
-    const[dataIn, setData] = useState([data])
-    
-    /*const[dataIn, setData] = useState([
+    const[dataIn, setData] = useState([
     { name: "A", similarityScore: 50 },
     { name: "B", similarityScore: 20},
     { name: "C", similarityScore: 5},
     { name: "Bob", similarityScore: 30},
     { name: "Joe Shmoe", similarityScore: 42},
     { name: "Bobby Shmurda", similarityScore: 35}
-  ])*/
-
+    ])
 
     const width = 800;
     const height = 400;
@@ -84,13 +81,14 @@ function BubbleChart(props) {
     }, [dataIn])
 
     return (
-        <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 800 800"
-        // preserveAspectRatio="none"
-        ref={svgRef}>
-        </svg>
+        <div>
+             <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 800 800"
+                ref={svgRef}>
+            </svg>
+        </div>
     )
 }
 

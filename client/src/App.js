@@ -6,14 +6,6 @@ import BubbleChart from './bubbleChart'
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState('')
-  // const[data, setData] = useState([
-  //   { name: "A", similarityScore: 50 },
-  //   { name: "B", similarityScore: 20},
-  //   { name: "C", similarityScore: 5},
-  //   { name: "Bob", similarityScore: 30},
-  //   { name: "Joe Shmoe", similarityScore: 42},
-  //   { name: "Bobby Shmurda", similarityScore: 35}
-  // ])
 
   const spotifyApi = new SpotifyWebApi()
   const params = getHashParams()
@@ -40,7 +32,7 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
-        <BubbleChart data={{name: currentUser, similarityScore: 100}}/>
+        <BubbleChart />
       </header>
     </div>
   )
@@ -66,11 +58,7 @@ function TextBox(props) {
   const [ftracks, setfTracks] = useState([])
   // friend list
   const [fList, setFList] = useState([])
-  //  {id: 20201},
-  //])
-
-  // get current user's ID
-  // get top tracks for current user
+  const [graphState, setGraphState] = useState(false)
 
   let calculateScore = () => {
       const docRef = firestoredb.collection('users').doc(user)
@@ -133,10 +121,6 @@ function TextBox(props) {
       })
     }
 
-    let triggerGraph = () => {
-      setGraphState(!graphState)
-    }
-
   return (
       <div>
       <form onSubmit={
@@ -161,15 +145,12 @@ function TextBox(props) {
       <button onClick={
         () => {
           getFriendList()
-          triggerGraph()
         }
       }>
         {/* show friend bubble */}
         Show Friend
       </button>
-      <div>
-        <BubbleChart />
-      </div>
+      
       </div>
     )
 }

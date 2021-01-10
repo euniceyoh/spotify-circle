@@ -40,6 +40,7 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
+        <BubbleChart data={{name: currentUser, similarityScore: 100}}/>
       </header>
     </div>
   )
@@ -65,7 +66,6 @@ function TextBox(props) {
   const [ftracks, setfTracks] = useState([])
   // friend list
   const [fList, setFList] = useState([])
-  const [graphState, setGraphState] = useState(false)
   //  {id: 20201},
   //])
 
@@ -156,7 +156,7 @@ function TextBox(props) {
         Similarity Score: {similarityScore}
       </div>
       <div>
-        Friend List: {fList}
+        Friend List: {(fList)}
       </div>
       <button onClick={
         () => {

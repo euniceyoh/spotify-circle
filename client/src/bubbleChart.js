@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as d3 from 'd3';
 
-function BubbleChart() {
+function BubbleChart(props) {
     // dummy data 
     const[dataIn, setData] = useState([
     { name: "A", similarityScore: 50 },
@@ -11,8 +11,6 @@ function BubbleChart() {
     { name: "Joe Shmoe", similarityScore: 42},
     { name: "Bobby Shmurda", similarityScore: 35}
    ])
-
-   
 
     const width = 800;
     const height = 400;
@@ -92,5 +90,4 @@ function BubbleChart() {
     )
 }
 
-//bubbleChart(data);
 export default BubbleChart;

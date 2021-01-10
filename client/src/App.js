@@ -40,7 +40,6 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
-        <BubbleChart />
       </header>
     </div>
   )
@@ -65,10 +64,10 @@ function TextBox(props) {
   const [fartists, setfArtists] = useState([])
   const [ftracks, setfTracks] = useState([])
   // friend list
-  const [fList, setFList] = useState([[currentUser, 100]])
+  const [fList, setFList] = useState([])
+  const [graphState, setGraphState] = useState(false)
   //  {id: 20201},
   //])
-
 
   // get current user's ID
   // get top tracks for current user
@@ -132,16 +131,10 @@ function TextBox(props) {
       }).catch(function(error) {
         setFList(null)
       })
-      /*let friendsList = []
-      for(let i in fList){
-        spotifyApi.getUser({user_id: i[0]})
-        .then(function (data){
-          let friend = {id: data.body.display_name, score: i[1]}
-        })
+    }
 
-        friendsList.push(friend)
-      }
-      setFList(friendsList)*/
+    let triggerGraph = () => {
+      setGraphState(!graphState)
     }
 
   return (
@@ -155,7 +148,6 @@ function TextBox(props) {
         <label>
           <input type="text" value={inputValue} onChange={(event) => {
             setInputValue(event.target.value)
-
             }} />
         </label>
         <input type="submit" value="Submit" />
@@ -164,14 +156,20 @@ function TextBox(props) {
         Similarity Score: {similarityScore}
       </div>
       <div>
-        Friend List: {(fList[0][0])}
+        Friend List: {fList}
       </div>
       <button onClick={
-        () => {getFriendList()}
+        () => {
+          getFriendList()
+          triggerGraph()
+        }
       }>
         {/* show friend bubble */}
         Show Friend
       </button>
+      <div>
+        <BubbleChart />
+      </div>
       </div>
     )
 }

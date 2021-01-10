@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/spotify-circle/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/spotify-circle/static/js/main.289cc26f.chunk.js",
+    "main.js.map": "/spotify-circle/static/js/main.289cc26f.chunk.js.map",
+    "runtime-main.js": "/spotify-circle/static/js/runtime-main.0e46f07a.js",
+    "runtime-main.js.map": "/spotify-circle/static/js/runtime-main.0e46f07a.js.map",
+    "static/js/2.766b83c0.chunk.js": "/spotify-circle/static/js/2.766b83c0.chunk.js",
+    "static/js/2.766b83c0.chunk.js.map": "/spotify-circle/static/js/2.766b83c0.chunk.js.map",
+    "static/js/3.f44d7365.chunk.js": "/spotify-circle/static/js/3.f44d7365.chunk.js",
+    "static/js/3.f44d7365.chunk.js.map": "/spotify-circle/static/js/3.f44d7365.chunk.js.map",
+    "index.html": "/spotify-circle/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/spotify-circle/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.766b83c0.chunk.js.LICENSE.txt": "/spotify-circle/static/js/2.766b83c0.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0e46f07a.js",
+    "static/js/2.766b83c0.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.289cc26f.chunk.js"
+  ]
+}

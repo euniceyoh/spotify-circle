@@ -4,8 +4,9 @@ import firestoredb, {saveSimilarityScore, addNewFriend} from './firebase'
 import Button from './components/Button'
 import Home from './components/Home'
 import {getHashParams, trackSimilarity, artistsSimilarity, genreSimilarity} from './functions'
+import BubbleChart from '@weknow/react-bubble-chart-d3';
 
-function App() {
+export default function App() {
   const [currentUser, setCurrentUser] = useState('')
 
   const spotifyApi = new SpotifyWebApi()
@@ -19,6 +20,7 @@ function App() {
     .then((user) => {
       setCurrentUser(user.id) // a string right 
   })
+
 
   return (
     <div className="App">
@@ -35,15 +37,13 @@ function App() {
 }
 
 function TextBox(props) {
+
   let user = props.userId 
 
   const[inputValue, setInputValue] = useState('') // aka id of friend 
   const[data, setData] = useState([])
   // similarity 
   const [similarityScore, setSimScore] = useState(0)
-  const [trackSimScore, setTrackSimilarity] = useState(0)
-  const [artistsSimScore, setArtistsSimilarity] = useState(0)
-  const [genreSimScore, setGenreSimilarity] = useState(0)
   // me 
   const [genres, setGenres] = useState([])
   const [artists, setArtists] = useState([])
@@ -52,11 +52,15 @@ function TextBox(props) {
   const [fgenres, setfGenres] = useState([])
   const [fartists, setfArtists] = useState([])
   const [ftracks, setfTracks] = useState([])
+  // friend list
+  const [fList, setFList] = useState([
+    {id: 20201},
+  ])
 
   // get current user's ID
   // get top tracks for current user
 
-    let calculateScore = () => {
+  let calculateScore = () => {
       const docRef = firestoredb.collection('users').doc(user)
       docRef.get().then((doc) => {
         if(doc.exists) {
@@ -100,11 +104,26 @@ function TextBox(props) {
       saveSimilarityScore(user, inputValue, sum)
     }
 
+    let getFriendList = () => {
+      const docRef = firestoredb.collection('users').doc(user).collection('friendsList')
+      docRef.get().then((snapshot) => {
+        snapshot.forEach(function(doc) {
+          // populate in {key:value}
+          // friendList[doc.id] = doc.data() 
+        })
+      }).catch(function(error) {
+        setFList(null)
+      })
+    }
+
   return (
       <div>
       <form onSubmit={
-        calculateScore 
-        }>
+        () => {
+          calculateScore()
+          calculateScore2()}
+        }> 
+        {/* show personal bubble  */}
         <label>
           <input type="text" value={inputValue} onChange={(event) => {
             setInputValue(event.target.value)
@@ -116,30 +135,14 @@ function TextBox(props) {
         Similarity Score: {similarityScore}
       </div>
       <div>
-        Genres: {genres}
+        Friend List: {fList}
       </div>
-      <div>
-        Artists: {artists}
-      </div>
-      <div>
-        Tracks: {tracks}
-      </div>
-      <h1>FRIEND</h1>
-      <div>
-        fGenres: {fgenres}
-      </div>
-      <div>
-        fArtists: {fartists}
-      </div>
-      <div>
-        fTracks: {ftracks}
-      </div>
-      <button onClick={calculateScore2}>
-        Show Percentage
+      <button onClick={
+        () => {getFriendList()}
+      }> 
+        {/* show friend bubble */}
+        Show Friend
       </button>
       </div>
     )
 }
-
-export default App;
-

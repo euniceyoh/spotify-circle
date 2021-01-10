@@ -17,7 +17,7 @@ function App() {
 
   spotifyApi.getMe()
     .then((user) => {
-      setCurrentUser(user.id) // a string right 
+      setCurrentUser(user.id) // a string right
   })
 
   return (
@@ -35,16 +35,16 @@ function App() {
 }
 
 function TextBox(props) {
-  let user = props.userId 
+  let user = props.userId
 
-  const[inputValue, setInputValue] = useState('') // aka id of friend 
+  const[inputValue, setInputValue] = useState('') // aka id of friend
   const[data, setData] = useState([])
-  // similarity 
+  // similarity
   const [similarityScore, setSimScore] = useState(0)
   const [trackSimScore, setTrackSimilarity] = useState(0)
   const [artistsSimScore, setArtistsSimilarity] = useState(0)
   const [genreSimScore, setGenreSimilarity] = useState(0)
-  // me 
+  // me
   const [genres, setGenres] = useState([])
   const [artists, setArtists] = useState([])
   const [tracks, setTracks] = useState([])
@@ -73,7 +73,7 @@ function TextBox(props) {
       fdocRef.get().then((doc) => {
         if(doc.exists) {
           let data = doc.data();
-          setData(data) // reusing 
+          setData(data) // reusing
           setfGenres(data.genres)
           setfArtists(data.artists)
           setfTracks(data.trackId)
@@ -91,11 +91,13 @@ function TextBox(props) {
       let gs = genreSimilarity(genres, fgenres)
       // setGenreSimilarity(gs)
 
+      setTracks(ts)
+      setArtists(as)
+      setGenres(gs)
       let sum = ts + as + gs
-      sum = sum/3
       setSimScore(sum)
-      
-      // writing to firebase 
+
+      // writing to firebase
       addNewFriend(user, inputValue)
       saveSimilarityScore(user, inputValue, sum)
     }
@@ -103,7 +105,7 @@ function TextBox(props) {
   return (
       <div>
       <form onSubmit={
-        calculateScore 
+        calculateScore
         }>
         <label>
           <input type="text" value={inputValue} onChange={(event) => {
@@ -142,4 +144,3 @@ function TextBox(props) {
 }
 
 export default App;
-

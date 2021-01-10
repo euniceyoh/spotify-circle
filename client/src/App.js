@@ -40,7 +40,7 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
-        <BubbleChart />
+        <BubbleChart data={{name: currentUser, similarityScore: 100}}/>
       </header>
     </div>
   )

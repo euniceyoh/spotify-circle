@@ -2,10 +2,18 @@ import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
 import firestoredb, {saveSimilarityScore, addNewFriend} from './firebase'
 import {getHashParams, trackSimilarity, artistsSimilarity, genreSimilarity} from './functions'
-
+import BubbleChart from './bubbleChart'
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState('')
+  // const[data, setData] = useState([
+  //   { name: "A", similarityScore: 50 },
+  //   { name: "B", similarityScore: 20},
+  //   { name: "C", similarityScore: 5},
+  //   { name: "Bob", similarityScore: 30},
+  //   { name: "Joe Shmoe", similarityScore: 42},
+  //   { name: "Bobby Shmurda", similarityScore: 35}
+  // ])
 
   const spotifyApi = new SpotifyWebApi()
   const params = getHashParams()
@@ -18,7 +26,6 @@ export default function App() {
     .then((user) => {
       setCurrentUser(user.id) // a string right
   })
-
 
   return (
     <div className="App">
@@ -33,6 +40,7 @@ export default function App() {
           Your ID: {currentUser}
         </div>
         <TextBox userId={currentUser}/>
+        <BubbleChart />
       </header>
     </div>
   )
@@ -60,6 +68,7 @@ function TextBox(props) {
   const [fList, setFList] = useState([])
   //  {id: 20201},
   //])
+
 
   // get current user's ID
   // get top tracks for current user

@@ -9,6 +9,7 @@
     "express": "~4.16.0",
     "firebase-admin": "^9.4.2",
     "querystring": "~0.2.0",
+    "react-router-dom": "^5.2.0",
     "request": "~2.83.0",
     "spotify-web-api-js": "^1.5.1",
     "spotify-web-api-node": "^5.0.0"

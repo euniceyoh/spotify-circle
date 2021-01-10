@@ -1,8 +1,6 @@
 import SpotifyWebApi from 'spotify-web-api-js'
 import React, { useState, useEffect, useCallback } from 'react'
 import firestoredb, {saveSimilarityScore, addNewFriend} from './firebase'
-import Button from './components/Button'
-import Home from './components/Home'
 import {getHashParams, trackSimilarity, artistsSimilarity, genreSimilarity} from './functions'
 
 function App() {
@@ -23,8 +21,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Home />
-        <Button />
+        <h1>Welcome to Spotify Circle</h1>
+        <div id="login">
+          <form action='http://localhost:8888/login'>
+            <input type="submit" value="Login to Spotify" />
+          </form>
+        </div>
         <div>
           Your ID: {currentUser}
         </div>
@@ -104,43 +106,50 @@ function TextBox(props) {
 
   return (
       <div>
-      <form onSubmit={
-        calculateScore
-        }>
-        <label>
-          <input type="text" value={inputValue} onChange={(event) => {
-            setInputValue(event.target.value)
-            }} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-      <div>
-        Similarity Score: {similarityScore}
-      </div>
-      <div>
-        Genres: {genres}
-      </div>
-      <div>
-        Artists: {artists}
-      </div>
-      <div>
-        Tracks: {tracks}
-      </div>
-      <h1>FRIEND</h1>
-      <div>
-        fGenres: {fgenres}
-      </div>
-      <div>
-        fArtists: {fartists}
-      </div>
-      <div>
-        fTracks: {ftracks}
-      </div>
-      <button onClick={calculateScore2}>
-        Show Percentage
-      </button>
+        <form onSubmit={
+          calculateScore
+          }>
+          <label>
+            <input type="text" value={inputValue} onChange={(event) => {
+              setInputValue(event.target.value)
+              }} />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+        <div>
+          Similarity Score: {similarityScore}
+        </div>
+        <div>
+          Genres: {genres}
+        </div>
+        <div>
+          Artists: {artists}
+        </div>
+        <div>
+          Tracks: {tracks}
+        </div>
+        <h1>FRIEND</h1>
+        <div>
+          fGenres: {fgenres}
+        </div>
+        <div>
+          fArtists: {fartists}
+        </div>
+        <div>
+          fTracks: {ftracks}
+        </div>
+        <button onClick={calculateScore2}>
+          Show Percentage
+        </button>
       </div>
     )
 }
+
+
+// Paste this above: 
+// data passed in should be an array [{name: "nick", similarityScore: 30 }]
+// first entry should be current user with similarity score 100
+// BubbleChart(data)
+
 
 export default App;

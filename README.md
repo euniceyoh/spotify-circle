@@ -37,4 +37,3 @@ Spotify analyzer that compares multiple user's music tastes and ranks them based
   * Update UI
   
  ### Notes
- [Brainstorm/Planning/Outlining](https://docs.google.com/document/d/1GCN58XZnOXx6Yme-luKZXArl6KxS2Tj9Z1MgMQmFsdE/edit?usp=sharing) 

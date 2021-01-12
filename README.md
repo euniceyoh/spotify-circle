@@ -8,12 +8,11 @@ Spotify analyzer that compares multiple user's music tastes and ranks them based
 
 ## Functionality
 * Authenticate spotify user account
-* Similarity algorithm: 
-  * Compare using top 50: [(API Endpoint Reference)](https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/)
+* Compare music tastes with a similarity algorithm: 
+  * Utilized top 50: [(API Endpoint Reference)](https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/)
     * genres
     * artists
     * tracks 
-* Use calculation to create bubble sizes 
 * Create a bubble chart with friends similarity scores
 * Add a friend using spotify account id 
 

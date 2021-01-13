@@ -14,7 +14,7 @@ Spotify analyzer that compares multiple user's music tastes and ranks them based
     * artists
     * tracks 
 * Use similarity calculation to create bubble sizes 
-* Create a bubble chart with friends similarity scores (in progress) 
+* Create a bubble chart with friends similarity scores 
 * Add a friend using spotify account id 
 
 ## Technologies
